@@ -1,5 +1,3 @@
-// To DO: Inteprete the backlog into todo item for this week (run on submit)
-// To DO: Update the to do list for this week in Forms, new sections? 
 // To DO: Set up Google Calendar
 // To DO: Read each section progress and update to each section
 // To DO: Gen new section via idea parking lot, dismiss section when finished
@@ -54,6 +52,7 @@ function backlogSync() {
   var backlogJSON = convertStringToJson(bocklogItem.getHelpText())
   for(var key of Object.keys(backlogJSON)){
     var targetComponent = getFormComponentByTitle(key)[0]
+    console.log(backlogJSON[key])
     targetComponent.setRows(backlogJSON[key])
   }
   return
@@ -75,29 +74,36 @@ function weeklyToDoSync() {
   return
 }
 
-function backlogManegement(actionItem=[["Learning Goal", ",,,,,,Challenge Accepted,Challenge Accepted,Challenge Accepted,Deleted This,Deleted This,Deleted This"]]){
+function backlogManegement(actionItem=[[ 'Working Goal', [ null, "Challenge Accepted", 'Deleted This', null, null, null ]]]){
   var toDoItem = getFormComponentByTitle(title="This Week To Do")[0]
   var toDoItemJSON = convertStringToJson(toDoItem.getHelpText())
   var bocklogItem = getFormComponentByTitle(title="Backup To Do Items")[0]
   var backlogJSON = convertStringToJson(bocklogItem.getHelpText())
   for(var pair of actionItem){
     console.log(pair)
-    var [section, reply] = pair
+    var [section, actionList] = pair
     var goalComponent = getFormComponentByTitle(section)[0]
     var goalList = goalComponent.getRows()
-    var actionList = reply.split(',')
+    console.log(goalList.length)
     for (var i in goalList){
-      if(actionList[i] == ""){
+      if(actionList[i] === null){
+        console.log(i + "=null")
         continue;
       }else if(actionList[i] == "Challenge Accepted"){
+        console.log(i + "=accpet")
         toDoItemJSON[section].push(goalList[i])
       }
+      console.log(i + "=delete")
       var index = backlogJSON[section].indexOf(goalList[i]);
       if (index > -1) { // only splice array when item is found
+        console.log("Item change")
         backlogJSON[section].splice(index, 1); // 2nd parameter means remove one item only
       }
     }
   }
+  console.log(toDoItemJSON)
+  console.log(backlogJSON)
+  // return
   toDoItem.setHelpText(convertJsonToString(toDoItemJSON))
   bocklogItem.setHelpText(convertJsonToString(backlogJSON))
 }

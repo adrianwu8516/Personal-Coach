@@ -12,9 +12,9 @@ function getFormComponentByTitle(title="Backup List") {
     if(itemTitle.includes(title)) {
       // Process the item type and title as per your requirements
       // For example, you can log them to the console or store them in an array
-      Logger.log('Item Type: ' + itemType);
-      Logger.log('Item Title: ' + itemTitle);
-      Logger.log('Item Id: ' + itemId);
+      // Logger.log('Item Type: ' + itemType);
+      // Logger.log('Item Title: ' + itemTitle);
+      // Logger.log('Item Id: ' + itemId);
       matchedList.push(findProperFormItemType(FORM.getItemById(itemId)))
     }
   }
@@ -184,52 +184,4 @@ function combineJSONItems(combinedJSON=testCombinedJSON, json=testJson) {
   }
   console.log(combinedJSON)
   return combinedJSON;
-}
-
-var inputIdeaString = '[Working] OOXX111, [Leisure] XXOO111, [Learning] SSXX111 [Working] SSSS111, [Learning] WWWW111';
-var testString = `Learning Goal:
-1. SSS
-2. XXX
-
-Working Goal:
-1. XDXXX
-2. SSS
-
-Leisure Goal:
-1. ZZZZ
-2. OOO`;
-
-var testCombinedJSON = {
-  "Learning Goal": [
-    "Build an add-on and publish",
-    "Check David's Code using ChatGPT",
-    "Finish how to Defi",
-    "Build a basic version personal coach using GAS and ChatGPT",
-    "Make a donation",
-    "Try AgentGPT and Linked to system service",
-    "SSXX",
-    "WWWW"
-  ],
-  "Working Goal": [
-    "Excel Research",
-    "Competition reports research",
-    "OOXX",
-    "SSSS"
-  ],
-  "Leisure Goal": [
-    "OOXX"
-  ]
-}
-
-var testJson = {
-  "Working Goal": [
-    "OOXX111"
-  ],
-  "Leisure Goal": [
-    "XXOO111"
-  ],
-  "Learning Goal": [
-    "SSXX111",
-    "WWWW111"
-  ]
 }

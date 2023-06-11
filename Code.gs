@@ -2,19 +2,17 @@
 // To DO: Read each section progress and update to each section
 // To DO: Gen new section via idea parking lot, dismiss section when finished
 // To DO: Email notification, to fill, to remind (maybe use GPT)
-
-const FORM_ID = '1b_brDkld5sZVjydl3bIFkpesNnmyAP3-5RBVe1hFfrk'
 const FORM = FormApp.openById(FORM_ID); // Replace 'FORM_ID' with the actual ID of your Google Form
-const FORM_ITEM = FORM.getItems();
+
 function onFormSubmit(e) {
   var formResponse = e.response;
   var itemResponses = formResponse.getItemResponses();
-  var actionItem = [];
   // Iterate through each item response in the form response
   for (var i = 0; i < itemResponses.length; i++) {
     var itemResponse = itemResponses[i];    
     var section = itemResponse.getItem().getTitle();
     var reply = itemResponse.getResponse();
+    var actionItem = []
     switch (section) {
     case 'What did you finished last week?':
       break;
@@ -23,7 +21,9 @@ function onFormSubmit(e) {
       break;
     default:
       // Perform actions for any other cases
-      if(section.includes("Goal")) actionItem.push([section, reply]);
+      if(section.includes("Goal")){
+        actionItem.push([section, reply])
+      }
       break;
     }
   }
@@ -63,7 +63,7 @@ function weeklyToDoSync() {
   var toDoItemJSON = convertStringToJson(toDoItem.getHelpText())
   for(var key of Object.keys(toDoItemJSON)){
     for(var item of toDoItemJSON[key]){
-      toDoList.push("[" + key.replace(" Goal", "") + "] " + item)
+      toDoList.push("[" + key.replace(" Goal", "") + "]" + item)
     }
     // console.log(toDoList)
     var progressCheckItem = getFormComponentByTitle(title="What did you finished last week?")[0]
@@ -78,23 +78,29 @@ function backlogManegement(actionItem=[[ 'Working Goal', [ null, "Challenge Acce
   var bocklogItem = getFormComponentByTitle(title="Backup To Do Items")[0]
   var backlogJSON = convertStringToJson(bocklogItem.getHelpText())
   for(var pair of actionItem){
+    console.log(pair)
     var [section, actionList] = pair
     var goalComponent = getFormComponentByTitle(section)[0]
     var goalList = goalComponent.getRows()
+    console.log(goalList.length)
     for (var i in goalList){
       if(actionList[i] === null){
+        console.log(i + "=null")
         continue;
       }else if(actionList[i] == "Challenge Accepted"){
+        console.log(i + "=accpet")
         toDoItemJSON[section].push(goalList[i])
       }
+      console.log(i + "=delete")
       var index = backlogJSON[section].indexOf(goalList[i]);
       if (index > -1) { // only splice array when item is found
+        console.log("Item change")
         backlogJSON[section].splice(index, 1); // 2nd parameter means remove one item only
       }
     }
   }
-  // console.log(toDoItemJSON)
-  // console.log(backlogJSON)
+  console.log(toDoItemJSON)
+  console.log(backlogJSON)
   // return
   toDoItem.setHelpText(convertJsonToString(toDoItemJSON))
   bocklogItem.setHelpText(convertJsonToString(backlogJSON))

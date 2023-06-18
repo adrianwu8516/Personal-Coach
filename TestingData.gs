@@ -1,14 +1,23 @@
-var inputIdeaString = '[Working] OOXX111, [Leisure] XXOO111, [Learning] SSXX111 [Working] SSSS111, [Learning] WWWW111';
+var inputIdeaString = '[Working] OOXX111\n[Leisure] XXOO111\n[Learning] SSXX111\n[Working] SSSS111\n[Learning] WWWW111';
+var inputIdeaString2 = `[Leisure] Plan Tibat Trip
+[Leisure] Bass Slap
+[Leisure] Bass Gunjo
+[Working] UserResearch
+[Learning] Find Online Master Program
+[Learning] Release MSFT add-in
+[Learning] Expand Scientifically Feature`
+
 var testString = `Learning Goal:
 1. SSS
-2. XXX
+2. XX OO
 
 Working Goal:
 1. XDXXX
-2. SSS
+2. XX OO
+12. SSS
 
 Leisure Goal:
-1. ZZZZ
+1. ZZ PP
 2. OOO`;
 
 var testCombinedJSON = {
@@ -33,15 +42,8 @@ var testCombinedJSON = {
   ]
 }
 
-var testJson = {
-  "Working Goal": [
-    "OOXX111"
-  ],
-  "Leisure Goal": [
-    "XXOO111"
-  ],
-  "Learning Goal": [
-    "SSXX111",
-    "WWWW111"
-  ]
+var testJson = { 
+  'Learning Goal': [ 'SSS', 'XX OO' ],
+  'Working Goal': [ 'XDXXX', 'XX OO', 'SSS' ],
+  'Leisure Goal': [ 'ZZ PP', 'OOO' ] 
 }

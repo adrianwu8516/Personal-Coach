@@ -148,7 +148,7 @@ function convertNewIdeasStringToJson(str=inputIdeaString2) {
   var json = {};
 
   // Remove square brackets and split string by comma
-  var items = str.replace(/\[/g, '').split(/, |\n/);
+  var items = str.replace(/\[/g, '').split(/\n/);
   for (var i = 0; i < items.length; i++) {
     var item = items[i].split('] ');
     var category = item[0] + " Goal";

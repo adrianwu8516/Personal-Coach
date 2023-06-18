@@ -1,4 +1,3 @@
-// To DO: Refine the This week to do item and make sure it would new/delete sections too
 // To DO: Set up Google Calendar
 // To DO: Read each section progress and update to each section
 // To DO: Email notification, to fill, to remind (maybe use GPT)

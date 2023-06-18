@@ -1,8 +1,9 @@
-function getFormComponentByTitle(title="Backup List") {
+function getFormComponentByTitle(title="Bass Goal") {
+  const form_item = FORM.getItems();
   var matchedList = []
   // Iterate through each form item
-  for (var i = 0; i < FORM_ITEM.length; i++) {
-    var item = FORM_ITEM[i];
+  for (var i = 0; i < form_item.length; i++) {
+    var item = form_item[i];
     
     // Get the item type and title
     var itemType = item.getType();
@@ -231,4 +232,14 @@ function generateTimestamp() {
   
   return timestamp;
 }
+
+function deleteEmptyArrays(json) {
+  for (let key in json) {
+    if (Array.isArray(json[key]) && json[key].length === 0) {
+      delete json[key];
+    }
+  }
+  return json;
+}
+
 

@@ -1,4 +1,4 @@
-var inputIdeaString = '[Working] OOXX111\n[Leisure] XXOO111\n[Learning] SSXX111\n[Working] SSSS111\n[Learning] WWWW111';
+var inputIdeaString = '[Working] OOXX111\n[Leisure] XXOO111\n[Learning] SSXX111\n[Working] SSSS111\n[Learning] WWWW111\n[Bass] WWWW111';
 var inputIdeaString2 = `[Leisure] Plan Tibat Trip
 [Leisure] Bass Slap
 [Leisure] Bass Gunjo

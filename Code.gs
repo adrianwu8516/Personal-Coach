@@ -1,12 +1,11 @@
-// To DO: Adding and deleting new categories
+// To DO: Refine the This week to do item and make sure it would new/delete sections too
 // To DO: Set up Google Calendar
 // To DO: Read each section progress and update to each section
-// To DO: Gen new section via idea parking lot, dismiss section when finished
 // To DO: Email notification, to fill, to remind (maybe use GPT)
 
 const FORM_ID = '1b_brDkld5sZVjydl3bIFkpesNnmyAP3-5RBVe1hFfrk'
 const FORM = FormApp.openById(FORM_ID); // Replace 'FORM_ID' with the actual ID of your Google Form
-const FORM_ITEM = FORM.getItems();
+
 function onFormSubmit(e) {
   var formResponse = e.response;
   var itemResponses = formResponse.getItemResponses();
@@ -35,11 +34,12 @@ function onFormSubmit(e) {
   if(newIdea) {
     var backlogJSON = ideasToBacklog(newIdea, backlogJSON);
   }
+  // console.log(backlogJSON)
   backlogSync(backlogJSON);
   weeklyToDoSync(toDoItemJSON);
 }
 
-function ideasToBacklog(str=inputIdeaString, backlogJSON) {
+function ideasToBacklog(str="inputIdeaString", backlogJSON) { //
   // Remove square brackets and split the string by commas
   var newItemObj = convertNewIdeasStringToJson(str)
   // Get backlog JSON
@@ -48,21 +48,57 @@ function ideasToBacklog(str=inputIdeaString, backlogJSON) {
     var backlogJSON = convertStringToJson(backlogItem.getHelpText())
   }
   backlogJSON = combineJSONItems(backlogJSON, newItemObj)
+  // console.log(backlogJSON)
   return backlogJSON
-  // bocklogItem.setHelpText(convertJsonToString(backlogJSON))
 }
 
 function backlogSync(backlogJSON) {
-  // Get backlog JSON
+  // Get backlog JSON from backlog, if exist backlogJSON input, then take the input as the main version and update the backlog instead
+  var backlogItem = getFormComponentByTitle(title="Backup To Do Items")[0]
   if (backlogJSON === undefined) {
-    var backlogItem = getFormComponentByTitle(title="Backup To Do Items")[0]
     var backlogJSON = convertStringToJson(backlogItem.getHelpText())
   }
+  backlogJSON = deleteEmptyArrays(backlogJSON)
+  // Updating items in each section and make a new one if it's not existed
   for(var key of Object.keys(backlogJSON)){
     var targetComponent = getFormComponentByTitle(key)[0]
-    console.log(backlogJSON[key])
-    targetComponent.setRows(backlogJSON[key].sort())
+    if(targetComponent){
+      // console.log(backlogJSON[key])
+      targetComponent.setRows(backlogJSON[key].sort())
+    }else{
+      // Locate the right place to insert component
+      var items = FORM.getItems(); // Get all form items
+      var lastIndex = -1; // Default index if component not found
+      // Iterate through each form item
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        // Check if the item title matches the specific component title
+        if (item.getTitle().match(/[\s\S] Goal/)) {
+          lastIndex = i; // Update the last index if a match is found
+        }
+      }
+      // Generate component
+      var gridItem = FORM.addGridItem();
+      gridItem.setTitle(key); // Set the item title
+      gridItem.setColumns(['Challenge Accepted', 'Deleted This']); // Add the columns
+      gridItem.setRows(backlogJSON[key].sort()); // Add the columns
+      FORM.moveItem(items.length, lastIndex+1);
+    }
   }
+  // remove unnecessary items
+  // var difference = FORM.getItems().filter(x => !Object.keys(backlogJSON).includes(x));
+  var items = FORM.getItems();
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var itemTitle = item.getTitle()
+    // Check if the item title matches the specific component title
+    if (itemTitle.match(/[\s\S] Goal/) && !Object.keys(backlogJSON).includes(itemTitle)) {
+      console.log(`Deleting items: ${itemTitle}`)
+      FORM.deleteItem(item)
+    }
+  }
+  // Overwrite the original backlog to ensure alignment
+  backlogItem.setHelpText(convertJsonToString(backlogJSON))
   return
 }
 
@@ -82,8 +118,9 @@ function weeklyToDoSync(toDoItemJSON) {
   }
   return
 }
-//actionItem=[[ 'Working Goal', [ null, "Challenge Accepted", 'Deleted This', null, null, null ]]]
-function backlogManegement(actionItem, toDoItemJSON, backlogJSON){
+
+//
+function backlogManegement(actionItem=[[ 'Working Goal', ['Deleted This']]], toDoItemJSON, backlogJSON){
   // Notice that the toDoManegement might prolong the backlog list and made it longer than form response
   var toDoItem = getFormComponentByTitle(title="This Week To Do")[0]
   if (toDoItemJSON === undefined) var toDoItemJSON = convertStringToJson(toDoItem.getHelpText())
@@ -107,10 +144,11 @@ function backlogManegement(actionItem, toDoItemJSON, backlogJSON){
   }
   // console.log(toDoItemJSON)
   // console.log(backlogJSON)
-  toDoItem.setHelpText(convertJsonToString(toDoItemJSON))
-  bocklogItem.setHelpText(convertJsonToString(backlogJSON))
+  // toDoItem.setHelpText(convertJsonToString(toDoItemJSON))
+  // bocklogItem.setHelpText(convertJsonToString(backlogJSON))
   return [toDoItemJSON, backlogJSON];
 }
+
 //actionArray = [ '80%','Pending','50%','Pending','Pending','Done','Pending','Pending','Pending','Done','Done',null,null ]
 function toDoManegement(actionArray, toDoItemJSON, backlogJSON){
   if (toDoItemJSON === undefined) {
@@ -127,7 +165,6 @@ function toDoManegement(actionArray, toDoItemJSON, backlogJSON){
   for(var i in actionArray){
     var progress = actionArray[i]
     if(progress != null){
-      console.log(progress)
       var key = itemReview[i].split("] ")[0].replace("[","") + " Goal"
       var target = itemReview[i].split("] ")[1]
       var index = toDoItemJSON[key].indexOf(target);

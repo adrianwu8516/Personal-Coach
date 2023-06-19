@@ -1,5 +1,4 @@
 // To DO: Set up Google Calendar
-// To DO: Read each section progress and update to each section
 // To DO: Email notification, to fill, to remind (maybe use GPT)
 
 const FORM_ID = '1b_brDkld5sZVjydl3bIFkpesNnmyAP3-5RBVe1hFfrk'
@@ -103,8 +102,8 @@ function backlogSync(backlogJSON) {
 
 function weeklyToDoSync(toDoItemJSON) {
   var toDoList = []
+  var toDoItem = getFormComponentByTitle(title="This Week To Do")[0]
   if (toDoItemJSON === undefined) {
-    var toDoItem = getFormComponentByTitle(title="This Week To Do")[0]
     var toDoItemJSON = convertStringToJson(toDoItem.getHelpText())
   }
   for(var key of Object.keys(toDoItemJSON)){
@@ -115,6 +114,8 @@ function weeklyToDoSync(toDoItemJSON) {
     var progressCheckItem = getFormComponentByTitle(title="What did you finished last week?")[0]
     progressCheckItem.setRows(toDoList.sort())
   }
+  toDoItemJSON = deleteEmptyArrays(toDoItemJSON)
+  toDoItem.setHelpText(convertJsonToString(toDoItemJSON))
   return
 }
 
@@ -127,13 +128,20 @@ function backlogManegement(actionItem=[[ 'Working Goal', ['Deleted This']]], toD
   if (backlogJSON === undefined) var backlogJSON = convertStringToJson(backlogItem.getHelpText())
   for(var pair of actionItem){
     var [section, actionList] = pair
+    console.log(pair)
     var goalComponent = getFormComponentByTitle(section)[0]
     var goalList = goalComponent.getRows()
     for (var i in goalList){
       if(actionList[i] === null){
         continue;
       }else if(actionList[i] == "Challenge Accepted"){
-        toDoItemJSON[section].push(goalList[i])
+        console.log(toDoItemJSON[section])
+        console.log(goalList[i])
+        if(toDoItemJSON[section]) {
+          toDoItemJSON[section].push(goalList[i])
+        }else{
+          toDoItemJSON[section] = [goalList[i]]
+        }
       }
       var index = backlogJSON[section].indexOf(goalList[i]);
       if (index > -1) { // only splice array when item is found
@@ -159,6 +167,7 @@ function toDoManegement(actionArray, toDoItemJSON, backlogJSON){
     var backlogJSON = convertStringToJson(backlogItem.getHelpText())
   }
   var recordSheet = getRecordSpreadsheet()
+  var itemReview = getFormComponentByTitle(title="What did you finished last week?")[0].getRows()
   // console.log(toDoItemJSON)
   // console.log(backlogJSON)
   for(var i in actionArray){

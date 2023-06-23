@@ -186,7 +186,7 @@ function toDoManegement(actionArray, toDoItemJSON, backlogJSON){
         toDoItemJSON[key].splice(index, 1); 
         backlogJSON[key]? backlogJSON[key].push(target) : backlogJSON[key] = [target]
       }else{
-        toDoItemJSON[key][index] = toDoItemJSON[key][index] + ` - ${progress}`
+        toDoItemJSON[key][index] = toDoItemJSON[key][index].replace(/ - [0-9]*%/g, "") + ` - ${progress}`
       }
     }
   }

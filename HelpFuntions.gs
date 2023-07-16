@@ -204,6 +204,11 @@ function getRecordSpreadsheet() {
   if (!spreadsheets.hasNext()) {
     // Create the spreadsheet if it doesn't exist
     var spreadsheet = SpreadsheetApp.create(spreadsheetName);
+    spreadsheet.getSheetByName('Sheet1').setName('ProgressRecord')
+    spreadsheet.getRange("A1:C1").setValues([["Goal", "ItemName", "Timestamp"]])
+    newSheet = spreadsheet.insertSheet();
+    newSheet.setName("WeeklyAnalysis");
+    newSheet.getRange("A1:F1").setValues([["Work", "Meeting", "SideProject", "Leisure", "Learning", "Timestamp"]])
     var fileId = spreadsheet.getId();
     var file = DriveApp.getFileById(fileId);
     

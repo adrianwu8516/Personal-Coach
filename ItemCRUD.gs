@@ -1,6 +1,5 @@
 // To DO: Set up Google Calendar
 // To DO: Email notification, to fill, to remind (maybe use GPT)
-
 const FORM_ID = '1b_brDkld5sZVjydl3bIFkpesNnmyAP3-5RBVe1hFfrk'
 const FORM = FormApp.openById(FORM_ID); // Replace 'FORM_ID' with the actual ID of your Google Form
 
@@ -119,7 +118,6 @@ function weeklyToDoSync(toDoItemJSON) {
   return
 }
 
-//
 function backlogManegement(actionItem=[[ 'Working Goal', ['Deleted This']]], toDoItemJSON, backlogJSON){
   // Notice that the toDoManegement might prolong the backlog list and made it longer than form response
   var toDoItem = getFormComponentByTitle(title="This Week To Do")[0]
@@ -166,7 +164,7 @@ function toDoManegement(actionArray, toDoItemJSON, backlogJSON){
     var backlogItem = getFormComponentByTitle(title="Backup To Do Items")[0]
     var backlogJSON = convertStringToJson(backlogItem.getHelpText())
   }
-  var recordSheet = getRecordSpreadsheet()
+  var recordSheet = getRecordSpreadsheet().getSheetByName("ProgressRecord")
   var itemReview = getFormComponentByTitle(title="What did you finished last week?")[0].getRows()
   // console.log(toDoItemJSON)
   // console.log(backlogJSON)

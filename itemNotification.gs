@@ -10,7 +10,7 @@ function weeklyNotification() {
   for (var goal of Object.keys(toDoItemJSON)){
     var title = "【" + goal + "】" + toDoItemJSON[goal].map(item => item.replace(/([\s\S]*?) - [\s\S]*/, "$1")).join("  |  ")
     console.log(title)
-    // var event = CalendarApp.getDefaultCalendar().createAllDayEvent(title, today, sevenDaysAfter);
+    var event = CalendarApp.getDefaultCalendar().createAllDayEvent(title, today, sevenDaysAfter);
   }
 
   // Calendar Event Analysis and Notification

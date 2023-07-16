@@ -1,4 +1,12 @@
-<p>Please check your work record below</p>
+<? for(var str of toDoItemStrArr){ ?>
+  <? if (str.match("Goal:")){ ?>
+      </ol><h4><?= str ?></h4><ol>
+  <? }else if(str!=""){ ?>
+      <li><?= str ?></li>
+  <? }?>
+<? } ?>
+</ol>
+<h4>Please check your work record below</h4>
 <table style="width: 400px; border-collapse: collapse;" border="0">
 <tbody>
 <tr>

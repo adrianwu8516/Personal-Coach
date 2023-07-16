@@ -1,22 +1,21 @@
-function weeklyNotification(toDoItemJSON) {
-  var toDoList = []
+function weeklyNotification() {
+  // GetDate
+  var today = new Date();
+  var sevenDaysAfter = new Date();
+  sevenDaysAfter.setDate(today.getDate() + 7);
+  
+  //To do processing
   var toDoItem = getFormComponentByTitle(title="This Week To Do")[0]
-  if (toDoItemJSON === undefined) {
-    var toDoItemJSON = convertStringToJson(toDoItem.getHelpText())
+  var toDoItemJSON = convertStringToJson(toDoItem.getHelpText())
+  for (var goal of Object.keys(toDoItemJSON)){
+    var title = "【" + goal + "】" + toDoItemJSON[goal].map(item => item.replace(/([\s\S]*?) - [\s\S]*/, "$1")).join("  |  ")
+    console.log(title)
+    // var event = CalendarApp.getDefaultCalendar().createAllDayEvent(title, today, sevenDaysAfter);
   }
-  console.log(toDoItemJSON)
-  return
-  for(var key of Object.keys(toDoItemJSON)){
-    for(var item of toDoItemJSON[key]){
-      toDoList.push("[" + key.replace(" Goal", "") + "] " + item)
-    }
-    // console.log(toDoList)
-    var progressCheckItem = getFormComponentByTitle(title="What did you finished last week?")[0]
-    progressCheckItem.setRows(toDoList.sort())
-  }
-  toDoItemJSON = deleteEmptyArrays(toDoItemJSON)
-  toDoItem.setHelpText(convertJsonToString(toDoItemJSON))
-  return
+
+  // Calendar Event Analysis and Notification
+  var hoursTaken = calendarEventAnalysis()
+  notificationMailer(toDoItem.getHelpText(), hoursTaken)
 }
 
 function calendarEventAnalysis() {
@@ -69,7 +68,7 @@ function calendarEventAnalysis() {
     }
   }
   var hoursTaken = countHoursByGroup(eventThisWeek)
-  notificationMailer(hoursTaken)
+  return hoursTaken
 }
 
 function countHoursByGroup(jsonData) {
@@ -99,7 +98,7 @@ function countHoursByGroup(jsonData) {
   return hoursTaken
 }
 
-function notificationMailer(hoursTaken={ "Work": 18, "Meeting": 10.5, "SideProject": 25, "Life": 16.5, "Learn": 0 }) {
+function notificationMailer(toDoItemStr, hoursTaken={ "Work": 18, "Meeting": 10.5, "SideProject": 25, "Life": 16.5, "Learn": 0 }) {
   // Data Processing  
   var groups = Object.keys(hoursTaken);
   var pct = {}
@@ -120,6 +119,7 @@ function notificationMailer(hoursTaken={ "Work": 18, "Meeting": 10.5, "SideProje
 
   // Email Generation
   var template = HtmlService.createTemplateFromFile('email_template');
+  template.toDoItemStrArr = toDoItemStr.split(/\n/).map(str => str.replace(/[0-9]*. ([\s\S]*)/, "$1"))
   template.hoursTaken = hoursTaken;
   template.pct = pct;
   var htmlBody = template.evaluate().getContent();

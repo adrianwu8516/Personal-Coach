@@ -134,7 +134,7 @@ function notificationMailer(toDoItemStr, hoursTaken={ "Work": 18, "Meeting": 10.
     emailImages["chart"+i]= chartBlobs[i];
   }
 
-  GmailApp.sendEmail('adrianwu8516@gmail.com, wuadrian@microsoft.com', 'Your Weekly Progress Report', '', {
+  GmailApp.sendEmail(EMAIL_LIST, 'Your Weekly Progress Report', '', {
     htmlBody: htmlBody,
     inlineImages:emailImages
   });
